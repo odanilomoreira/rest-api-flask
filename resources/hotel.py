@@ -48,6 +48,8 @@ class Hotel(Resource):
         return {'message': 'Hotel not found.'}, 404
 
     def post(self, hotel_id):
+        dados = Hotel.atributos.parse_args()
+        novo_hotel = {'hotel_id': hotel_id, **dados}
         hoteis.append(novo_hotel)
         return novo_hotel, 201
 
