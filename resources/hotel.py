@@ -50,8 +50,6 @@ class Hotel(Resource):
 
     def post(self, hotel_id):
         dados = Hotel.atributos.parse_args()
-
-        # novo_hotel = {'hotel_id': hotel_id, **dados}
         novo_hotel = HotelModel(hotel_id, **dados) # Objeto
 
         hoteis.append(novo_hotel.json())
@@ -59,7 +57,6 @@ class Hotel(Resource):
 
     def put(self, hotel_id):
         dados = Hotel.atributos.parse_args()
-        # novo_hotel =    {'hotel_id': hotel_id, **dados}
         novo_hotel = HotelModel(hotel_id, **dados)
 
         hotel = Hotel.find_hotel(hotel_id)
