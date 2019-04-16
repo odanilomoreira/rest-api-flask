@@ -7,7 +7,7 @@ class Hoteis(Resource):
 
 class Hotel(Resource):
     atributos = reqparse.RequestParser()
-    atributos.add_argument('nome')
+    atributos.add_argument('nome', type=str, required=True, help="The field 'nome' cannot be left blank.")
     atributos.add_argument('estrelas')
     atributos.add_argument('diaria')
     atributos.add_argument('cidade')
