@@ -1,35 +1,33 @@
 from flask_restful import Resource, reqparse
+from models.usuario import UserModel
 
 class User(Resource):
-    @classmethod
-    def get(cls, user_id):
-        user = UserModel.find_user(user_id)
-        if not user:
-            return {'message': 'User not found'}, 404
-        return user.json()
 
-    @classmethod
-    def delete(cls, user_id):
+    def get(self, user_id):
         user = UserModel.find_user(user_id)
-        if not user:
-            return {'message': 'User not found'}, 404
-        user.delete_user()
-        return {'message': 'User deleted.'}, 200
+        if user:
+            return user.json()
+        return {'message': 'User not found.'}, 404
+
+    def delete(self, user_id):
+        user = UserModel.find_user(user_id)
+        if user:
+            user.delete_user()
+            return {'message': 'User deleted.'}
+        return {'message': 'User not found.'}, 404
 
 class UserRegister(Resource):
+    # /cadastro
 
     def post(self):
         atributos = reqparse.RequestParser()
         atributos.add_argument('login', type=str, required=True, help="The field 'login' cannot be left blank.")
         atributos.add_argument('senha', type=str, required=True, help="The field 'senha' cannot be left blank.")
-        data = atributos.parse_args()
+        dados = atributos.parse_args()
 
-        if UserModel.find_user(data['login']):
-            return {"message":"The login '{}' already exists!".format(data['login'])}, 400
+        if UserModel.find_by_login(dados['login']):
+            return {"message": "The login '{}' already exists.".format(data['login'])}, 400 # bad request
 
-        # user = UserModel(data['username'], data['password'])
-        user = UserModel(**data)
-
-        user.save_to_db()
-
-        return {"message": "User created successfully!"}, 201
+        user = UserModel(**dados)
+        user.save_user()
+        return {'message': 'User created successfully.'}, 201 # created
