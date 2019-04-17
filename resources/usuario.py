@@ -1,8 +1,8 @@
 from flask_restful import Resource, reqparse
 from models.usuario import UserModel
-from flask_jwt_extended import create_access_token, jwt_required
+from flask_jwt_extended import create_access_token, jwt_required, get_raw_jwt
 from werkzeug.security import safe_str_cmp
-
+from blacklist import BLACKLIST
 #pip install Flask-JWT-Extended
 
 atributos = reqparse.RequestParser()
@@ -38,6 +38,7 @@ class UserRegister(Resource):
         user.save_user()
         return {'message': 'User created successfully.'}, 201 # created
 
+
 class UserLogin(Resource):
 
     @classmethod
@@ -51,3 +52,11 @@ class UserLogin(Resource):
             return {'access_token': token_de_acesso}, 200
 
         return {'message': 'The username or password is incorrect.'}, 401 # unauthorized
+
+class UserLogout(Resource):
+
+    @jwt_required
+    def post(self):
+        jwt_id = get_raw_jwt()['jti'] #JWT ID
+        BLACKLIST.add(jwt_id)
+        return {'message': 'Logged out successfully!'}, 200
