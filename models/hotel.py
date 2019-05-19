@@ -9,12 +9,16 @@ class HotelModel(banco.Model):
     diaria = banco.Column(banco.Float(precision=2))
     cidade = banco.Column(banco.String(40))
 
-    def __init__(self,hotel_id,nome,estrelas,diaria,cidade):
+    site_id = banco.Column(banco.Integer, banco.ForeignKey('sites.site_id')) # chave estrangeira
+    site = banco.relationship('siteModel') # SQLAlchemy faz um join no banco de dados automaticamente pra gente
+
+    def __init__(self,hotel_id,nome,estrelas,diaria,cidade,site_id):
         self.hotel_id = hotel_id
         self.nome = nome
         self.estrelas = estrelas
         self.diaria = diaria
         self.cidade = cidade
+        self.site_id = site_id
 
     def json(self): # representação JSON do Model
         return {"hotel_id": self.hotel_id,
