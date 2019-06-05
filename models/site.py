@@ -1,25 +1,30 @@
 from sql_alchemy import banco
 
-class siteModel(banco.Model):
+class SiteModel(banco.Model):
     __tablename__ = 'sites'
 
     site_id = banco.Column(banco.Integer, primary_key=True)
-    descricao = banco.Column(banco.String(80))
+    url = banco.Column(banco.String(80))
+    hoteis = banco.relationship('HotelModel') # lista de hoteis
 
-    hoteis = banco.relationship('hotelModel') # lista de hoteis
-
-    def __init__(self,site_id,descricao):
-        self.site_id = site_id
-        self.descricao = descricao
+    def __init__(self,url):
+        self.url = url
 
     def json(self):
         return {"site_id": self.site_id,
-                "descricao": self.descricao,
-                "hoteis": self.hoteis # temos que ter os hoteis para exibir
+                "url": self.url,
+                "hoteis": [hotel.json() for hotel in self.hoteis] # temos que ter os hoteis para exibir
                 }
 
     @classmethod
-    def find_site(cls, site_id):
+    def find_site(cls, url):
+        site = cls.query.filter_by(url=url).first()
+        if site:
+            return site
+        return None
+
+    @classmethod
+    def find_by_id(cls, site_id):
         site = cls.query.filter_by(site_id=site_id).first()
         if site:
             return site
@@ -29,9 +34,11 @@ class siteModel(banco.Model):
         banco.session.add(self)
         banco.session.commit()
 
-    def update_site(self, descricao):
-        self.descricao = descricao
-
     def delete_site(self):
+
+        #deletando todos os hoteis agregados ao site
+        [hotel.delete_hotel() for hotel in self.hoteis]
+
+        #deletando site
         banco.session.delete(self)
         banco.session.commit()

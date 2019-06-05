@@ -10,7 +10,7 @@ class HotelModel(banco.Model):
     cidade = banco.Column(banco.String(40))
 
     site_id = banco.Column(banco.Integer, banco.ForeignKey('sites.site_id')) # chave estrangeira
-    site = banco.relationship('siteModel') # SQLAlchemy faz um join no banco de dados automaticamente pra gente
+    site = banco.relationship('SiteModel') # SQLAlchemy faz um join no banco de dados automaticamente pra gente
 
     def __init__(self,hotel_id,nome,estrelas,diaria,cidade,site_id):
         self.hotel_id = hotel_id
@@ -25,7 +25,8 @@ class HotelModel(banco.Model):
                 "nome": self.nome,
                 "estrelas": self.estrelas,
                 "diaria": self.diaria,
-                "cidade": self.cidade
+                "cidade": self.cidade,
+                "site_id": self.site_id
                 }
 
     @classmethod
